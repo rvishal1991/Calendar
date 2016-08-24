@@ -47,6 +47,11 @@
 - (instancetype)initWithEventStore:(EKEventStore*)eventStore;
 - (void)reloadEvents;
 
+
+//exposing method to get event obj
+-(EKEvent*)eventOfType:(MGCEventType)type atIndex:(NSUInteger)index date:(NSDate*)date;
+
+
 @end
 
 
