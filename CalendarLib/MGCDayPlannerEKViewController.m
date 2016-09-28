@@ -79,7 +79,7 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
         [self.dayPlannerView setActivityIndicatorVisible:NO forDate:date];
     }
     [self.daysToLoad removeAllObjects];
-
+    
     [self.eventsCache removeAllObjects];
     [self fetchEventsInDateRange:self.dayPlannerView.visibleDays];
     [self.dayPlannerView reloadAllEvents];
@@ -135,7 +135,7 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
     
     CGRect cellRect = [self.dayPlannerView rectForNewEventOfType:self.createdEventType atDate:self.createdEventDate];
     CGRect visibleRect = CGRectIntersection(self.dayPlannerView.bounds, cellRect);
-
+    
     UIPopoverPresentationController *popController = eventController.popoverPresentationController;
     popController.permittedArrowDirections = UIPopoverArrowDirectionLeft|UIPopoverArrowDirectionRight;
     popController.delegate = self;
@@ -160,6 +160,8 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
     [super viewDidLoad];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadEvents) name:EKEventStoreChangedNotification object:self.eventStore];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadEvents) name:@"filterEvent" object:self.eventStore];
     
     self.eventsCache = [[OSCache alloc]init];
     self.eventsCache.countLimit = cacheSize;
@@ -231,13 +233,69 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
     
     if (self.eventKitSupport.accessGranted) {
         NSArray *events = [self.eventStore eventsMatchingPredicate:predicate];
-        if (events) {
-            return [events sortedArrayUsingSelector:@selector(compareStartDateWithEvent:)];
+        
+        //        if (events) {
+        //            return [events sortedArrayUsingSelector:@selector(compareStartDateWithEvent:)];
+        //        }
+        
+        NSArray *newEventArr = [self filteredArray:events];
+        
+        if (newEventArr) {
+            return [newEventArr sortedArrayUsingSelector:@selector(compareStartDateWithEvent:)];
         }
     }
     
+    NSLog(@"MCGDAY");
+    
+    
     return [NSArray array];
 }
+
+-(NSArray *)filteredArray:(NSArray *)arrTofilter{
+    
+    NSArray *strArr = [[NSArray alloc]init];
+    
+    if([[NSUserDefaults standardUserDefaults]objectForKey:@"arrayFiltered"]){
+        strArr = [[NSUserDefaults standardUserDefaults]objectForKey:@"arrayFiltered"];
+    }
+    
+    NSMutableArray *arrFiltered = [[NSMutableArray alloc]init];
+    for (EKEvent *event in arrTofilter) {
+        
+        if([event.calendar.title isEqualToString:@"HelloSimplify"]){
+            if(event.URL != nil){
+                NSString *strUn = event.URL.absoluteString;
+                NSString *strFamily = [[strUn componentsSeparatedByString:@"_"] lastObject];
+                if([strArr containsObject:strFamily]){
+                    [arrFiltered addObject:event];
+                }
+            }
+            
+        }else{
+            [arrFiltered addObject:event];
+        }
+        
+    }
+    
+    return arrFiltered;
+}
+
+
+
+//func removeTimeStampFromFamily(family : String , trimLenth : Int) -> String {
+//    var familyName = family
+//    if familyName.contains(":") {
+//        let index1 = familyName.endIndex.advancedBy(-trimLenth)
+//
+//        familyName = familyName.substringToIndex(index1)
+//        return familyName
+//
+//    }else{
+//        return familyName
+//
+//    }
+//
+//}
 
 // returns the events dictionary for given date
 // try to load it from the cache, or create it if needed
@@ -392,26 +450,26 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
 
 - (BOOL)dayPlannerView:(MGCDayPlannerView*)view canMoveEventOfType:(MGCEventType)type atIndex:(NSUInteger)index date:(NSDate*)date toType:(MGCEventType)targetType date:(NSDate*)targetDate
 {
-	EKEvent *ev = [self eventOfType:type atIndex:index date:date];
-	return ev.calendar.allowsContentModifications;
+    EKEvent *ev = [self eventOfType:type atIndex:index date:date];
+    return ev.calendar.allowsContentModifications;
 }
 
 - (void)dayPlannerView:(MGCDayPlannerView*)view moveEventOfType:(MGCEventType)type atIndex:(NSUInteger)index date:(NSDate*)date toType:(MGCEventType)targetType date:(NSDate*)targetDate
 {
-	EKEvent *ev = [self eventOfType:type atIndex:index date:date];
-	
-	if (ev) {
-		NSDateComponents *duration = [self.calendar components:NSCalendarUnitMinute fromDate:ev.startDate toDate:ev.endDate options:0];
-		if (ev.allDay && targetType == MGCTimedEventType) {
-			duration.minute = 60;
-		}
-		NSDate *end = [self.calendar dateByAddingComponents:duration toDate:targetDate options:0];
-		
-		// allDay property has to be set before start and end dates !
-		ev.allDay = (targetType == MGCAllDayEventType);
-		ev.startDate = targetDate;
-		ev.endDate = end;
+    EKEvent *ev = [self eventOfType:type atIndex:index date:date];
     
+    if (ev) {
+        NSDateComponents *duration = [self.calendar components:NSCalendarUnitMinute fromDate:ev.startDate toDate:ev.endDate options:0];
+        if (ev.allDay && targetType == MGCTimedEventType) {
+            duration.minute = 60;
+        }
+        NSDate *end = [self.calendar dateByAddingComponents:duration toDate:targetDate options:0];
+        
+        // allDay property has to be set before start and end dates !
+        ev.allDay = (targetType == MGCAllDayEventType);
+        ev.startDate = targetDate;
+        ev.endDate = end;
+        
         [self.eventKitSupport saveEvent:ev completion:^(BOOL completion) {
             [self.dayPlannerView endInteraction];
         }];
