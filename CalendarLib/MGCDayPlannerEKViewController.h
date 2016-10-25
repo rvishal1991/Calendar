@@ -49,6 +49,8 @@
 //exposing method to get event obj
 -(EKEvent*)eventOfType:(MGCEventType)type atIndex:(NSUInteger)index date:(NSDate*)date;
 
+- (void)dayPlannerView:(MGCDayPlannerView *)view createNewEventOfType:(MGCEventType)type atDate:(NSDate*)date;
+
 
 @end
 

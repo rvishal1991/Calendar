@@ -26,7 +26,7 @@
 - (instancetype)initWithCoder:(NSCoder*)aDecoder
 {
     self = [super initWithCoder:aDecoder];
-    if (self) {        
+    if (self) {
         self.selectedDayBackgroundColor = [UIColor darkGrayColor];
         self.selectedDayTextColor = [UIColor whiteColor];
         self.todayColor = [UIColor redColor];
@@ -92,7 +92,7 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-
+    
     self.dayNameLabel.textColor = [UIColor blackColor];
     self.dayNumberLabel.textColor = [UIColor blackColor];
     self.today = NO;

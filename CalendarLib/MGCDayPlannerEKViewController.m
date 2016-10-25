@@ -331,7 +331,6 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
     
     return filteredEvents;
 }
-
 - (EKEvent*)eventOfType:(MGCEventType)type atIndex:(NSUInteger)index date:(NSDate*)date
 {
     NSArray *events = nil;
@@ -419,12 +418,16 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
 - (MGCEventView*)dayPlannerView:(MGCDayPlannerView*)view viewForEventOfType:(MGCEventType)type atIndex:(NSUInteger)index date:(NSDate*)date
 {
     EKEvent *ev = [self eventOfType:type atIndex:index date:date];
+    //Changing Eventview cell
     
     MGCStandardEventView *evCell = (MGCStandardEventView*)[view dequeueReusableViewWithIdentifier:EventCellReuseIdentifier forEventOfType:type atIndex:index date:date];
-    evCell.font = [UIFont systemFontOfSize:11];
+    evCell.font = [UIFont systemFontOfSize:13];
     evCell.title = ev.title;
     evCell.subtitle = ev.location;
-    evCell.color = [UIColor colorWithCGColor:ev.calendar.CGColor];
+    
+    UIColor *cellBack = [UIColor colorWithCGColor:ev.calendar.CGColor];
+    
+    evCell.color = [cellBack colorWithAlphaComponent:.8];
     evCell.style = MGCStandardEventViewStylePlain|MGCStandardEventViewStyleSubtitle;
     evCell.style |= (type == MGCAllDayEventType) ?: MGCStandardEventViewStyleBorder;
     return evCell;
