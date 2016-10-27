@@ -33,16 +33,16 @@
 
 /*! Presentation styles for the view */
 typedef NS_OPTIONS(NSUInteger, MGCStandardEventViewStyle) {
-	MGCStandardEventViewStyleDefault = 0,		// transparent background
-	MGCStandardEventViewStylePlain	 = 1 << 0,	// plain background
-	MGCStandardEventViewStyleDot	 = 1 << 1,	// event details are preceded by a dot (e.g to indicate a timed event in the month planner view)
-	MGCStandardEventViewStyleBorder	 = 1 << 2,	// view shows a left border (e.g timed events in the day planner view)
-	MGCStandardEventViewStyleSubtitle = 1 << 3, // view shows the subtitle string
-	MGCStandardEventViewStyleDetail  = 1 << 4	// view shows the detail string
+    MGCStandardEventViewStyleDefault = 0,		// transparent background
+    MGCStandardEventViewStylePlain	 = 1 << 0,	// plain background
+    MGCStandardEventViewStyleDot	 = 1 << 1,	// event details are preceded by a dot (e.g to indicate a timed event in the month planner view)
+    MGCStandardEventViewStyleBorder	 = 1 << 2,	// view shows a left border (e.g timed events in the day planner view)
+    MGCStandardEventViewStyleSubtitle = 1 << 3, // view shows the subtitle string
+    MGCStandardEventViewStyleDetail  = 1 << 4	// view shows the detail string
 };
 
 
-/*! 
+/*!
  *  This subclass of MGCEventView can be used to display the basic properties of an event
  *	in a way similar to iCal.
  *	It is the view class used by the EventKit specialized day/month planner view controllers.
@@ -66,5 +66,7 @@ typedef NS_OPTIONS(NSUInteger, MGCStandardEventViewStyle) {
 
 /*! Font used to draw the event content. Defaults to system font. */
 @property (nonatomic) UIFont *font;
+
+
 
 @end

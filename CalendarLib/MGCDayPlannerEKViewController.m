@@ -254,10 +254,28 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
 -(NSArray *)filteredArray:(NSArray *)arrTofilter{
     
     NSArray *strArr = [[NSArray alloc]init];
+    NSString *strUser = [[NSString alloc]init];
     
-    if([[NSUserDefaults standardUserDefaults]objectForKey:@"arrayFiltered"]){
-        strArr = [[NSUserDefaults standardUserDefaults]objectForKey:@"arrayFiltered"];
+    if([[NSUserDefaults standardUserDefaults]objectForKey:@"userFamily"]){
+        strUser = [[NSUserDefaults standardUserDefaults]objectForKey:@"userFamily"];
     }
+    
+    
+    if([[NSUserDefaults standardUserDefaults]objectForKey:strUser]){
+        strArr = [[NSUserDefaults standardUserDefaults]objectForKey:strUser];
+    }else{
+        if([[NSUserDefaults standardUserDefaults]objectForKey:@"arrFamilies"]){
+            strArr = [[NSUserDefaults standardUserDefaults]objectForKey:@"arrFamilies"];
+        }
+    }
+    
+    NSString *striCalkey = [NSString stringWithFormat:@"%@_iCal",strUser];
+    BOOL iCalValue = true;
+    
+    if([[NSUserDefaults standardUserDefaults]objectForKey:striCalkey]){
+        iCalValue = [[NSUserDefaults standardUserDefaults]boolForKey:striCalkey];
+    }
+    
     
     NSMutableArray *arrFiltered = [[NSMutableArray alloc]init];
     for (EKEvent *event in arrTofilter) {
@@ -272,7 +290,13 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
             }
             
         }else{
-            [arrFiltered addObject:event];
+            if([event.calendar.source.title isEqualToString:@"iCloud"]){
+                if(iCalValue == nil || iCalValue == true ){
+                    [arrFiltered addObject:event];
+                }
+            }else{
+                [arrFiltered addObject:event];
+            }
         }
         
     }
@@ -415,19 +439,20 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
     return count;
 }
 
+
 - (MGCEventView*)dayPlannerView:(MGCDayPlannerView*)view viewForEventOfType:(MGCEventType)type atIndex:(NSUInteger)index date:(NSDate*)date
 {
     EKEvent *ev = [self eventOfType:type atIndex:index date:date];
     //Changing Eventview cell
     
     MGCStandardEventView *evCell = (MGCStandardEventView*)[view dequeueReusableViewWithIdentifier:EventCellReuseIdentifier forEventOfType:type atIndex:index date:date];
-    evCell.font = [UIFont systemFontOfSize:13];
+    evCell.font = [UIFont boldSystemFontOfSize:13];
     evCell.title = ev.title;
     evCell.subtitle = ev.location;
     
     UIColor *cellBack = [UIColor colorWithCGColor:ev.calendar.CGColor];
     
-    evCell.color = [cellBack colorWithAlphaComponent:.8];
+    evCell.color = [cellBack colorWithAlphaComponent:.6];
     evCell.style = MGCStandardEventViewStylePlain|MGCStandardEventViewStyleSubtitle;
     evCell.style |= (type == MGCAllDayEventType) ?: MGCStandardEventViewStyleBorder;
     return evCell;
