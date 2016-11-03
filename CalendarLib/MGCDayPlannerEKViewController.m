@@ -290,11 +290,7 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
             }
             
         }else{
-            if([event.calendar.source.title isEqualToString:@"iCloud"]){
-                if(iCalValue == nil || iCalValue == true ){
-                    [arrFiltered addObject:event];
-                }
-            }else{
+            if(iCalValue == nil || iCalValue == true ){
                 [arrFiltered addObject:event];
             }
         }
