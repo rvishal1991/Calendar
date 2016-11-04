@@ -252,10 +252,13 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
 
 - (NSDictionary*)allEventsInDateRange:(MGCDateRange*)range
 {
-    NSArray *events = [self fetchEventsFrom:range.start to:range.end calendars:nil];
+    NSArray *newEventArr = [self fetchEventsFrom:range.start to:range.end calendars:nil];
     
     NSUInteger numDaysInRange = [range components:NSCalendarUnitDay forCalendar:self.calendar].day;
     NSMutableDictionary *eventsPerDay = [NSMutableDictionary dictionaryWithCapacity:numDaysInRange];
+    
+    NSArray *events = [self filteredArray:newEventArr];
+    
     
     for (EKEvent *ev in events)
     {
@@ -276,6 +279,59 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
     
     return eventsPerDay;
 }
+
+
+-(NSArray *)filteredArray:(NSArray *)arrTofilter{
+    
+    NSArray *strArr = [[NSArray alloc]init];
+    NSString *strUser = [[NSString alloc]init];
+    
+    if([[NSUserDefaults standardUserDefaults]objectForKey:@"userFamily"]){
+        strUser = [[NSUserDefaults standardUserDefaults]objectForKey:@"userFamily"];
+    }
+    
+    
+    if([[NSUserDefaults standardUserDefaults]objectForKey:strUser]){
+        strArr = [[NSUserDefaults standardUserDefaults]objectForKey:strUser];
+    }else{
+        if([[NSUserDefaults standardUserDefaults]objectForKey:@"arrFamilies"]){
+            strArr = [[NSUserDefaults standardUserDefaults]objectForKey:@"arrFamilies"];
+        }
+    }
+    
+    NSString *striCalkey = [NSString stringWithFormat:@"%@_iCal",strUser];
+    BOOL iCalValue = true;
+    
+    if([[NSUserDefaults standardUserDefaults]objectForKey:striCalkey]){
+        iCalValue = [[NSUserDefaults standardUserDefaults]boolForKey:striCalkey];
+    }
+    
+    
+    NSMutableArray *arrFiltered = [[NSMutableArray alloc]init];
+    for (EKEvent *event in arrTofilter) {
+        
+        if([event.calendar.title isEqualToString:@"HelloSimplify"]){
+            if(event.URL != nil){
+                NSString *strUn = event.URL.absoluteString;
+                NSString *strFamily = [[strUn componentsSeparatedByString:@"_"] lastObject];
+                if([strArr containsObject:strFamily]){
+                    [arrFiltered addObject:event];
+                }
+            }
+            
+        }else{
+            if(iCalValue){
+                [arrFiltered addObject:event];
+            }
+        }
+        
+    }
+    
+    return arrFiltered;
+}
+
+
+
 
 //- (void)cacheEvents:(NSDictionary*)events forMonthStartingAtDate:(NSDate*)date
 //{

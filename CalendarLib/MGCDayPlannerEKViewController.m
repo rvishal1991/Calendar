@@ -290,7 +290,7 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
             }
             
         }else{
-            if(iCalValue == nil || iCalValue == true ){
+            if(iCalValue){
                 [arrFiltered addObject:event];
             }
         }
