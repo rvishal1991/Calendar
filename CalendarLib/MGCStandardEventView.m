@@ -74,15 +74,28 @@ static CGFloat kSpace = 2;
     UIFont *boldFont = [UIFont fontWithDescriptor:[[self.font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold] size:self.font.pointSize];
     NSMutableAttributedString *as = [[NSMutableAttributedString alloc]initWithString:s attributes:@{NSFontAttributeName: boldFont ?: self.font }];
     
+    
+    UIFont *applyFont = [UIFont systemFontOfSize:self.font.pointSize - 4];
+    
     if (self.subtitle && self.subtitle.length > 0 && self.style & MGCStandardEventViewStyleSubtitle) {
         NSMutableString *s  = [NSMutableString stringWithFormat:@"\n%@", self.subtitle];
-        NSMutableAttributedString *subtitle = [[NSMutableAttributedString alloc]initWithString:s attributes:@{NSFontAttributeName:self.font}];
+        
+        UIFont *applyFont = [UIFont systemFontOfSize:self.font.pointSize - 2];
+        
+        NSMutableAttributedString *subtitle = [[NSMutableAttributedString alloc]initWithString:s attributes:@{NSFontAttributeName:applyFont}];
+        
+        //NSMutableAttributedString *subtitle = [[NSMutableAttributedString alloc]initWithString:s attributes:@{NSFontAttributeName:self.font}];
         [as appendAttributedString:subtitle];
     }
     
     if (self.detail && self.detail.length > 0 && self.style & MGCStandardEventViewStyleDetail) {
-        UIFont *smallFont = [UIFont fontWithDescriptor:[self.font fontDescriptor] size:self.font.pointSize - 2];
+        // UIFont *smallFont = [UIFont fontWithDescriptor:[self.font fontDescriptor] size:self.font.pointSize - 2];
+        
+        UIFont *smallFont = [UIFont systemFontOfSize:self.font.pointSize - 4];
+        
         NSMutableString *s = [NSMutableString stringWithFormat:@"\t%@", self.detail];
+        // NSMutableAttributedString *detail = [[NSMutableAttributedString alloc]initWithString:s attributes:@{NSFontAttributeName:smallFont}];
+        
         NSMutableAttributedString *detail = [[NSMutableAttributedString alloc]initWithString:s attributes:@{NSFontAttributeName:smallFont}];
         [as appendAttributedString:detail];
     }
