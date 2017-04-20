@@ -41,6 +41,7 @@
 @property (nonatomic) NSCalendar *calendar;
 @property (nonatomic) NSSet *visibleCalendars;
 @property (nonatomic, readonly) EKEventStore *eventStore;
+
 @property (nonatomic, weak) id<MGCDayPlannerEKViewControllerDelegate> delegate;
 
 /** designated initializer */

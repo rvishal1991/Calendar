@@ -238,7 +238,8 @@ static const CGFloat kMaxHourSlotHeight = 150.;
             return;
         
         [self reloadCollectionViews];
-        [self scrollToDate:date options:MGCDayPlannerScrollDate animated:NO];
+        
+       [self scrollToDate:date options:MGCDayPlannerScrollDate animated:NO];
     }
 }
 
@@ -329,6 +330,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         }
         
         [self reloadCollectionViews];
+        
         [self scrollToDate:firstDate options:MGCDayPlannerScrollDate animated:NO];
     }
 }
@@ -2067,11 +2069,12 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         if (direction == ScrollDirectionHorizontal) {
             [self setupSubviews];  // allDayEventsView might need to be resized
         }
-        
         if ([self.delegate respondsToSelector:@selector(dayPlannerView:didEndScrolling:)]) {
             MGCDayPlannerScrollType type = direction == ScrollDirectionHorizontal ? MGCDayPlannerScrollDate : MGCDayPlannerScrollTime;
+            
             [self.delegate dayPlannerView:self didEndScrolling:type];
         }
+        
     }
 }
 

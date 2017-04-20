@@ -52,8 +52,10 @@ static CGFloat kItemHeight = 60;
     if (self) {
         
         self.dayPlannerView = dayPlannerView;
-        self.headerBackgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.0];;
+        self.headerBackgroundColor = [UIColor whiteColor];;
         
+      //  self.headerBackgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.0];;
+
         //setup the flow layout
         self.flowLayout = (UICollectionViewFlowLayout*)layout;
         self.flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
@@ -82,7 +84,12 @@ static CGFloat kItemHeight = 60;
         //Bottom label to display full date
         self.detailsLabel = [[UILabel alloc] initWithFrame:CGRectZero]; //will be resized to fit
         self.detailsLabel.backgroundColor = self.headerBackgroundColor;
-        self.detailsLabel.textColor = [UIColor darkGrayColor];
+        UIColor *simplifyColor = [UIColor colorWithRed:21.0/255.0 green:141.0/255.0 blue:148.0/255.0 alpha:1.0];
+
+      //  self.detailsLabel.textColor = [UIColor darkTextColor];
+        self.detailsLabel.textColor = simplifyColor;
+        self.detailsLabel.font = [UIFont boldSystemFontOfSize:15];
+
         self.detailsLabel.textAlignment = NSTextAlignmentCenter;
         self.detailsDateFormater = [[NSDateFormatter alloc] init];
         [self.detailsDateFormater setDateStyle:NSDateFormatterFullStyle];
@@ -106,7 +113,20 @@ static CGFloat kItemHeight = 60;
 - (void)layoutSubviews{
     [super layoutSubviews];
     
+    int DaysToDisplay = 1;
+    
+    if(self.dayPlannerView.numberOfVisibleDays == 1){
+        DaysToDisplay = 1;
+    }else if (self.dayPlannerView.numberOfVisibleDays == 3){
+        DaysToDisplay = 3 ;
+    }else{
+        DaysToDisplay  = 7;
+    }
+    
     CGFloat maxItemWidth = self.frame.size.width / kNumberOfDaysToDisplay;
+    
+   // CGFloat maxItemWidth = self.frame.size.width / DaysToDisplay;
+
     self.flowLayout.itemSize = CGSizeMake(maxItemWidth, kItemHeight);
     
     //always select the same day of the week when switching weeks (as the native apple calendar does)
@@ -213,7 +233,21 @@ static CGFloat kItemHeight = 60;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
+    
+    int DaysToDisplay = 1;
+    
+    if(self.dayPlannerView.numberOfVisibleDays == 1){
+        DaysToDisplay = 1;
+    }else if (self.dayPlannerView.numberOfVisibleDays == 3){
+        DaysToDisplay = 3 ;
+    }else{
+        DaysToDisplay  = 7;
+    }
+    
     return kNumberOfDaysToDisplay;
+    
+   // return DaysToDisplay;
+
 }
 
 #pragma mark - UICollectionViewDelegate

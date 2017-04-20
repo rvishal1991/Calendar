@@ -65,10 +65,16 @@
 	dayPlannerView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
 	self.dayPlannerView = dayPlannerView;
     self.dayPlannerView.autoresizesSubviews = YES;
-}
+   }
 
 - (void)viewDidLayoutSubviews{
     [super viewDidLayoutSubviews];
+    
+//    if (self.dayPlannerView.numberOfVisibleDays == 1){
+//        self.showsWeekHeaderView = true;
+//    }else{
+//        self.showsWeekHeaderView = false;
+//    }
     
     if (!self.headerView && self.showsWeekHeaderView) {
         self.dayPlannerView.numberOfVisibleDays = 1;
@@ -77,6 +83,8 @@
         [self setupHeaderView];
     }
 }
+
+
 
 - (void)setupHeaderView{
     self.headerView = [[MGCCalendarHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.dayPlannerView.frame.size.width, self.dayPlannerView.dayHeaderHeight) collectionViewLayout:[[UICollectionViewFlowLayout alloc] init] andDayPlannerView:self.dayPlannerView];
@@ -149,6 +157,7 @@
 - (void)dayPlannerView:(MGCDayPlannerView*)view didEndScrolling:(MGCDayPlannerScrollType)scrollType
 {
     [self.headerView selectDate:view.visibleDays.start];
+    
 }
 
 @end

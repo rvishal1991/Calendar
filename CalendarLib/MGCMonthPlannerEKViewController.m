@@ -49,6 +49,9 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
 @property (nonatomic) MGCDateRange *visibleMonths;					// range of months currently shown
 @property (nonatomic) EKEvent *movedEvent;
 @property (nonatomic) NSDateFormatter *dateFormatter;
+@property (nonatomic) NSArray *arrColorAll;
+@property (nonatomic) NSArray *arrColorFamily;
+@property (nonatomic) NSArray *arrColorOnly;
 
 @end
 
@@ -161,6 +164,19 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
     
     self.monthPlannerView.calendar = self.calendar;
     [self.monthPlannerView registerClass:MGCStandardEventView.class forEventCellReuseIdentifier:EventCellReuseIdentifier];
+    
+    NSString *strUser = [[NSString alloc]init];
+    
+    if([[NSUserDefaults standardUserDefaults]objectForKey:@"loggedInUser"]){
+        strUser = [[NSUserDefaults standardUserDefaults]objectForKey:@"loggedInUser"];
+    }
+    
+    if([[NSUserDefaults standardUserDefaults]objectForKey:strUser]){
+        self.arrColorAll = [[NSUserDefaults standardUserDefaults]objectForKey:strUser];
+    }
+    
+    self.arrColorOnly = [self.arrColorAll valueForKey:@"familyColor"];
+    self.arrColorFamily = [self.arrColorAll valueForKey:@"name"];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -311,18 +327,18 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
     for (EKEvent *event in arrTofilter) {
         
         if([event.calendar.title isEqualToString:@"HelloSimplify"]){
-                        
             if(event.URL != nil){
                 NSString *strUn = event.URL.absoluteString;
-                
-                NSArray *arr = [strUn componentsSeparatedByString:@"_"];
-                if(arr.count >= 3){
-                    if([strArr containsObject:arr[2]]){
+                NSArray *arrTemp = [strUn componentsSeparatedByString:@"_"];
+                if(arrTemp.count >= 3){
+                    NSString *strFamily = arrTemp[2];
+                    if([strArr containsObject:strFamily]){
                         [arrFiltered addObject:event];
                     }
                 }
+               // NSString *strFamily = [[strUn componentsSeparatedByString:@"_"] lastObject];
+                
             }
-
             
         }else{
             if(iCalValue){
@@ -452,7 +468,37 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
         evCell.title = ev.title;
         evCell.subtitle = ev.location;
         evCell.detail = [self.dateFormatter stringFromDate:ev.startDate];
-        evCell.color = [UIColor colorWithCGColor:ev.calendar.CGColor];
+        
+        //TODO: group color ---
+        
+        NSString *strFamily = [[NSString alloc]init];
+        if([ev.calendar.title isEqualToString:@"HelloSimplify"]){
+            if(ev.URL != nil){
+                NSString *strUn = ev.URL.absoluteString;
+                NSArray *arrTemp = [strUn componentsSeparatedByString:@"_"];
+                if(arrTemp.count >= 3){
+                    strFamily = arrTemp[2];
+                }
+            }
+            
+        }
+        
+        if([self.arrColorFamily containsObject:strFamily] && [strFamily length] > 0){
+            int index =[self.arrColorFamily indexOfObject:strFamily];
+            if (index < self.arrColorFamily.count) {
+                NSString *color = [self.arrColorOnly objectAtIndex:index];
+                UIColor *cellBack = [self colorWithHexString:color];
+                evCell.color = [UIColor colorWithCGColor:ev.calendar.CGColor];
+            }else{
+                evCell.color = [UIColor colorWithCGColor:ev.calendar.CGColor];
+            }
+        }else{
+            evCell.color = [UIColor colorWithCGColor:ev.calendar.CGColor];
+        }
+        
+        
+
+//        evCell.color = [UIColor colorWithCGColor:ev.calendar.CGColor];
         
         NSDate *start = [self.calendar mgc_startOfDayForDate:ev.startDate];
         NSDate *end = [self.calendar mgc_nextStartOfDayForDate:ev.endDate];
@@ -463,6 +509,16 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
         evCell.style |= ev.isAllDay ?: MGCStandardEventViewStyleDetail;
     }
     return evCell;
+}
+
+
+-(UIColor *)colorWithHexString:(NSString *)hexString {
+    unsigned rgbValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:hexString];
+    [scanner setScanLocation:1]; // bypass '#' character
+    [scanner scanHexInt:&rgbValue];
+    
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
 }
 
 - (BOOL)monthPlannerView:(MGCMonthPlannerView*)view canMoveCellForEventAtIndex:(NSUInteger)index date:(NSDate*)date

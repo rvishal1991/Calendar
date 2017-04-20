@@ -27,7 +27,12 @@
 {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.selectedDayBackgroundColor = [UIColor darkGrayColor];
+        
+        UIColor *simplifyColor = [UIColor colorWithRed:21.0/255.0 green:141.0/255.0 blue:148.0/255.0 alpha:1.0];
+    //    self.selectedDayBackgroundColor = [UIColor darkGrayColor];
+        
+        self.selectedDayBackgroundColor = simplifyColor;
+
         self.selectedDayTextColor = [UIColor whiteColor];
         self.todayColor = [UIColor redColor];
         self.weekendColor = [UIColor grayColor];
@@ -68,23 +73,45 @@
 {
     [super layoutSubviews];
     
+    UIColor *simplifyColor = [UIColor colorWithRed:21.0/255.0 green:141.0/255.0 blue:148.0/255.0 alpha:1.0];
+    
     if (self.isSelected) {
         self.dayNumberLabel.backgroundColor = self.selectedDayBackgroundColor;
         self.dayNumberLabel.layer.masksToBounds = YES;
         self.dayNumberLabel.layer.cornerRadius = 15.0;
         self.dayNumberLabel.textColor = self.selectedDayTextColor;
+        self.dayNumberLabel.font = [UIFont boldSystemFontOfSize:18];
     }
     else {
+        self.dayNumberLabel.font = [UIFont systemFontOfSize:18];
         self.dayNumberLabel.backgroundColor = [UIColor clearColor];
-        self.dayNumberLabel.textColor = self.selectedDayBackgroundColor;
+        //self.dayNumberLabel.textColor = self.selectedDayBackgroundColor;
+        self.dayNumberLabel.textColor = [UIColor grayColor];
+
     }
     
     if (self.isToday) {
-        self.dayNumberLabel.textColor = self.todayColor;
-        self.dayNameLabel.textColor = self.todayColor;
+        self.dayNumberLabel.font = [UIFont boldSystemFontOfSize:18];
+
+        if(self.isSelected){
+            self.dayNumberLabel.textColor = [UIColor whiteColor];
+        }else{
+            self.dayNumberLabel.textColor = simplifyColor;
+        }
+        self.dayNameLabel.textColor = simplifyColor;
     }
+    
+    
     if (self.isWeekend && !self.isToday) {
+        
+        self.dayNumberLabel.font = [UIFont systemFontOfSize:18];
         self.dayNumberLabel.textColor = self.weekendColor;
+        
+        if(self.isSelected){
+            self.dayNumberLabel.textColor = [UIColor whiteColor];
+        }else{
+            self.dayNumberLabel.textColor = self.weekendColor;
+        }
         self.dayNameLabel.textColor = self.weekendColor;
     }
 }
@@ -93,11 +120,16 @@
 {
     [super prepareForReuse];
     
-    self.dayNameLabel.textColor = [UIColor blackColor];
+    self.dayNameLabel.textColor = [UIColor grayColor];
     self.dayNumberLabel.textColor = [UIColor blackColor];
     self.today = NO;
     self.weekend = NO;
-    self.selectedDayBackgroundColor = [UIColor darkGrayColor];
+    
+    UIColor *simplifyColor = [UIColor colorWithRed:21.0/255.0 green:141.0/255.0 blue:148.0/255.0 alpha:1.0];
+   // self.selectedDayBackgroundColor = [UIColor darkGrayColor];
+    
+    self.selectedDayBackgroundColor = simplifyColor;
+    
     self.selectedDayTextColor = [UIColor whiteColor];
     self.todayColor = [UIColor redColor];
     self.weekendColor = [UIColor grayColor];
