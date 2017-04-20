@@ -311,13 +311,18 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
     for (EKEvent *event in arrTofilter) {
         
         if([event.calendar.title isEqualToString:@"HelloSimplify"]){
+                        
             if(event.URL != nil){
                 NSString *strUn = event.URL.absoluteString;
-                NSString *strFamily = [[strUn componentsSeparatedByString:@"_"] lastObject];
-                if([strArr containsObject:strFamily]){
-                    [arrFiltered addObject:event];
+                
+                NSArray *arr = [strUn componentsSeparatedByString:@"_"];
+                if(arr.count >= 3){
+                    if([strArr containsObject:arr[2]]){
+                        [arrFiltered addObject:event];
+                    }
                 }
             }
+
             
         }else{
             if(iCalValue){
