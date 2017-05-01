@@ -181,10 +181,18 @@
 
 - (MGCEventCellLayoutAttributes*)layoutAttributesForItemAtIndexPath:(NSIndexPath*)indexPath
 {
-	//NSLog(@"layoutAttributesForItemAtIndexPath %@", indexPath);
-	
-	NSArray *attribs = [self layoutAttributesForSection:indexPath.section];
-	return [attribs objectAtIndex:indexPath.item];
+    //NSLog(@"layoutAttributesForItemAtIndexPath %@", indexPath);
+    
+    //TODO: Crash
+    
+    NSArray *attribs = [self layoutAttributesForSection:indexPath.section];
+    
+    if(indexPath.item < attribs.count){
+        return [attribs objectAtIndex:indexPath.item];
+    }else{
+        return [[MGCEventCellLayoutAttributes alloc] init];
+    }
+    //return [attribs objectAtIndex:indexPath.item];
 }
 
 - (MGCEventCellLayoutAttributes*)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath*)indexPath
